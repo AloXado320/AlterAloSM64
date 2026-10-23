@@ -15,7 +15,7 @@
 #include "engine/surface_collision.h"
 #include "engine/behavior_script.h"
 #include "level_update.h"
-#include "ingame_menu.h"
+#include "game/ui/dialog.h"
 #include "mario_actions_cutscene.h"
 #include "save_file.h"
 #include "object_helpers.h"

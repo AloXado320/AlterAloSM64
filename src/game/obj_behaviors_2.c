@@ -15,7 +15,7 @@
 #include "engine/surface_load.h"
 #include "game_init.h"
 #include "geo_misc.h"
-#include "ingame_menu.h"
+#include "game/ui/dialog.h"
 #include "interaction.h"
 #include "level_table.h"
 #include "level_update.h"

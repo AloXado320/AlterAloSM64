@@ -141,7 +141,7 @@ ACTOR_DIR      := actors
 LEVEL_DIRS     := $(patsubst levels/%,%,$(dir $(wildcard levels/*/header.h)))
 
 # Directories containing source files
-SRC_DIRS := src src/boot src/engine src/game src/menu src/buffers src/audio $(AUDIO_SRC_DIR) actors levels bin data assets asm lib sound
+SRC_DIRS := src src/boot src/engine src/game src/game/ui src/menu src/buffers src/audio $(AUDIO_SRC_DIR) actors levels bin data assets asm lib sound
 BIN_DIRS := bin bin/$(VERSION)
 
 # File dependencies and variables for specific files
@@ -343,7 +343,9 @@ DUMMY != mkdir -p $(ALL_DIRS)
 $(BUILD_DIR)/include/text_strings.h: $(BUILD_DIR)/include/text_menu_strings.h
 $(BUILD_DIR)/src/menu/file_select.o: $(BUILD_DIR)/include/text_strings.h
 $(BUILD_DIR)/src/menu/star_select.o: $(BUILD_DIR)/include/text_strings.h
-$(BUILD_DIR)/src/game/ingame_menu.o: $(BUILD_DIR)/include/text_strings.h
+$(BUILD_DIR)/src/game/ui/pause_menu.o: $(BUILD_DIR)/include/text_strings.h
+$(BUILD_DIR)/src/game/ui/course_complete.o: $(BUILD_DIR)/include/text_strings.h
+$(BUILD_DIR)/src/game/ui/cutscene_text.o: $(BUILD_DIR)/include/text_strings.h
 
 
 #==============================================================================#

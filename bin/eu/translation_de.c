@@ -2,7 +2,7 @@
 
 #include "macros.h"
 
-#include "game/ingame_menu.h"
+#include "game/ui/dialog.h"
 
 #include "make_const_nonconst.h"
 

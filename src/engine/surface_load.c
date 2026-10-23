@@ -1,7 +1,7 @@
 #include <PR/ultratypes.h>
 
 #include "sm64.h"
-#include "game/ingame_menu.h"
+#include "game/ui/hud_extra.h"
 #include "graph_node.h"
 #include "behavior_script.h"
 #include "behavior_data.h"

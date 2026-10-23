@@ -1,5 +1,5 @@
-#ifndef INGAME_MENU_H
-#define INGAME_MENU_H
+#ifndef FONT_STRING_H
+#define FONT_STRING_H
 
 #include <PR/ultratypes.h>
 
@@ -7,58 +7,6 @@
     (((asc) >= '0' && (asc) <= '9') ? ((asc) - '0') :              \
      ((asc) >= 'A' && (asc) <= 'Z') ? ((asc) - 'A' + 0x0A) :       \
      ((asc) >= 'a' && (asc) <= 'z') ? ((asc) - 'a' + 0x24) : 0x00)
-
-
-#define MENU_MTX_PUSH   1
-#define MENU_MTX_NOPUSH 2
-
-#define MENU_SCROLL_VERTICAL   1
-#define MENU_SCROLL_HORIZONTAL 2
-
-// Japanese File Select uses an unique table
-// to print specific Japanese HUD chars
-#define HUD_LUT_JPMENU 1
-#define HUD_LUT_GLOBAL 2
-
-// For file select JP HUD difference
-#if defined(VERSION_JP) || defined(VERSION_SH)
-#define HUD_LUT_DIFF HUD_LUT_JPMENU
-#else
-#define HUD_LUT_DIFF HUD_LUT_GLOBAL
-#endif
-
-// They didn't change it everywhere in iQue
-#ifdef VERSION_CN
-#define HUD_LUT_DIFF2 HUD_LUT_JPMENU
-#else
-#define HUD_LUT_DIFF2 HUD_LUT_DIFF
-#endif
-
-enum MenuMode {
-    MENU_MODE_NONE = -1,
-    MENU_MODE_UNUSED_0,
-    MENU_MODE_RENDER_PAUSE_SCREEN,
-    MENU_MODE_RENDER_COURSE_COMPLETE_SCREEN,
-    MENU_MODE_UNUSED_3
-};
-
-extern s8 gDialogCourseActNum;
-extern s8 gHudFlash;
-
-struct DialogEntry {
-    /*0x00*/ u32 unused;
-    /*0x04*/ s8 linesPerBox;
-    /*0x06*/ s16 leftOffset;
-    /*0x08*/ s16 width;
-    /*0x0C*/ const u8 *str;
-};
-
-// EU only
-enum HudSpecialCharsEU {
-    HUD_CHAR_A_UMLAUT = 0x3A,
-    HUD_CHAR_O_UMLAUT = 0x3B,
-    HUD_CHAR_U_UMLAUT = 0x3C
-};
 
 enum SpecialFontChars {
     GLOBAL_CHAR_SPACE = 0x9E,
@@ -132,32 +80,20 @@ enum DialogSpecialChars {
 #define SPECIAL_CHAR(x) (x)
 #endif
 
-// gDialogResponse
-enum DialogResponseDefines {
-    DIALOG_RESPONSE_NONE,
-    DIALOG_RESPONSE_YES,
-    DIALOG_RESPONSE_NO,
-    DIALOG_RESPONSE_NOT_DEFINED
+#if defined(VERSION_US) || defined(VERSION_EU) || defined(VERSION_CN)
+// First byte is length, rest is string
+struct MultiTextEntry {
+    u8 str[5];
 };
 
-extern s32 gDialogResponse;
-extern u16 gMenuTextColorTransTimer;
-extern s8 gLastDialogLineNum;
-extern s32 gDialogVariable;
-extern u16 gMenuTextAlpha;
-extern s16 gCutsceneMsgXOffset;
-extern s16 gCutsceneMsgYOffset;
-extern s8 gRedCoinsCollected;
+#define TEXT_THE_RAW ASCII_TO_DIALOG('t'), ASCII_TO_DIALOG('h'), ASCII_TO_DIALOG('e'), 0x00
+#define TEXT_YOU_RAW ASCII_TO_DIALOG('y'), ASCII_TO_DIALOG('o'), ASCII_TO_DIALOG('u'), 0x00
 
-void create_dl_identity_matrix(void);
-void create_dl_translation_matrix(s8 pushOp, f32 x, f32 y, f32 z);
-void create_dl_ortho_matrix(void);
+enum MultiStringIDs { STRING_THE, STRING_YOU };
 
-void print_generic_string(s16 x, s16 y, const u8 *str);
-void print_hud_lut_string(s8 hudLUT, s16 x, s16 y, const u8 *str);
-void print_menu_generic_string(s16 x, s16 y, const u8 *str);
+extern u8 gDialogCharWidths[256];
+#endif
 
-void handle_menu_scrolling(s8 scrollDirection, s8 *currentIndex, s8 minIndex, s8 maxIndex);
 #if defined(VERSION_US) || defined(VERSION_EU) || defined(VERSION_CN)
 s16 get_str_x_pos_from_center(s16 centerPos, u8 *str, f32 scale);
 #endif
@@ -167,35 +103,38 @@ s16 get_str_x_pos_from_center(s16 centerPos, u8 *str, f32 scale);
 #if defined(VERSION_JP) || defined(VERSION_EU) || defined(VERSION_SH)
 s16 get_str_x_pos_from_center_scale(s16 centerPos, u8 *str, f32 scale);
 #endif
-void print_hud_my_score_coins(s32 useCourseCoinScore, s8 fileIndex, s8 courseIndex, s16 x, s16 y);
-
-void int_to_str(s32 num, u8 *dst);
-
-#ifdef VERSION_CN
-void int_to_str_2(s32 num, u8 *dst);
+#if defined(VERSION_US) || defined(VERSION_EU) || defined(VERSION_CN)
+s16 get_string_width(u8 *str);
 #endif
 
+void int_to_str(s32 num, u8 *dst);
 #ifdef VERSION_CN
+void int_to_str_2(s32 num, u8 *dst);
 #define INT_TO_STR_DIFF int_to_str_2
 #else
 #define INT_TO_STR_DIFF int_to_str
 #endif
 
-s16 get_dialog_id(void);
-void create_dialog_box(s16 dialog);
-void create_dialog_box_with_var(s16 dialog, s32 dialogVar);
-void create_dialog_inverted_box(s16 dialog);
-void create_dialog_box_with_response(s16 dialog);
-void reset_dialog_render_state(void);
-void set_menu_mode(s16 mode);
-void reset_cutscene_msg_fade(void);
-void dl_rgba16_begin_cutscene_msg_fade(void);
-void dl_rgba16_stop_cutscene_msg_fade(void);
-void print_credits_str_ascii(s16 x, s16 y, const char *str);
-void set_cutscene_message(s16 xOffset, s16 yOffset, s16 msgIndex, s16 msgDuration);
-void do_cutscene_handler(void);
-void render_hud_cannon_reticle(void);
-void reset_red_coins_collected(void);
-s16 render_menus_and_dialogs(void);
+#ifdef VERSION_CN
+void render_generic_char(u16 c);
+#else
+void render_generic_char(u8 c);
+#endif
+#ifdef VERSION_CN
+void render_generic_char_cn(u16 c);
+#endif
+#ifdef VERSION_EU
+u8 *alloc_ia4_tex_from_i1(u8 *in, s16 width, s16 height);
+void render_generic_char_at_pos(s16 xPos, s16 yPos, u8 c);
+void render_lowercase_diacritic(s16 *xPos, s16 *yPos, u8 letter, u8 diacritic);
+void render_uppercase_diacritic(s16 *xPos, s16 *yPos, u8 letter, u8 diacritic);
+#endif
 
-#endif // INGAME_MENU_H
+void print_generic_string(s16 x, s16 y, const u8 *str);
+void print_menu_generic_string(s16 x, s16 y, const u8 *str);
+
+void font_draw_texrect(s32 ulx, s32 uly, s32 lrx, s32 lry, u32 dsdx, u32 dtdy);
+void font_draw_texrect_flip(s32 ulx, s32 uly, s32 lrx, s32 lry, u32 uls, u32 ult, u32 dsdx, u32 dtdy);
+void font_draw_text_quad(void);
+
+#endif // FONT_STRING_H
